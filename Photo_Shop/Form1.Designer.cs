@@ -32,29 +32,34 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.добавитьИзображениеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.AutoScroll = true;
             this.panel1.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.panel1.Location = new System.Drawing.Point(940, 31);
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Location = new System.Drawing.Point(895, 31);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(250, 691);
+            this.panel1.Size = new System.Drawing.Size(295, 691);
             this.panel1.TabIndex = 0;
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(15, 31);
+            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox1.Location = new System.Drawing.Point(12, 31);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(905, 690);
+            this.pictureBox1.Size = new System.Drawing.Size(877, 690);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
             // 
             // menuStrip1
             // 
-            this.menuStrip1.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.menuStrip1.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.файлToolStripMenuItem});
@@ -66,10 +71,19 @@
             // 
             // файлToolStripMenuItem
             // 
-            this.файлToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.файлToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.добавитьИзображениеToolStripMenuItem});
+            this.файлToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.файлToolStripMenuItem.Name = "файлToolStripMenuItem";
             this.файлToolStripMenuItem.Size = new System.Drawing.Size(59, 24);
             this.файлToolStripMenuItem.Text = "Файл";
+            // 
+            // добавитьИзображениеToolStripMenuItem
+            // 
+            this.добавитьИзображениеToolStripMenuItem.Name = "добавитьИзображениеToolStripMenuItem";
+            this.добавитьИзображениеToolStripMenuItem.Size = new System.Drawing.Size(259, 26);
+            this.добавитьИзображениеToolStripMenuItem.Text = "Добавить изображение";
+            this.добавитьИзображениеToolStripMenuItem.Click += new System.EventHandler(this.Button_AddImage_Click);
             // 
             // Form1
             // 
@@ -97,5 +111,6 @@
         private PictureBox pictureBox1;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem файлToolStripMenuItem;
+        private ToolStripMenuItem добавитьИзображениеToolStripMenuItem;
     }
 }
