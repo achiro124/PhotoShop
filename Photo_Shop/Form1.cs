@@ -2,14 +2,16 @@ namespace Photo_Shop
 {
     public partial class Form1 : Form
     {
-        private Image pictureBoxImage;
-        private Image copyPicrureBoxImage;
-        private List<Image> listImages = new List<Image>();
+        private Image? pictureBoxImage;
+        private Image? copyPicrureBoxImage;
+        private List<Image> listImages = new();
 
         int wg = 0;
-        private List<GroupBox> groupBoxes = new List<GroupBox>();
-        private List<PictureBox> pictureBoxes = new List<PictureBox>();
-        private List<ComboBox> comboBoxes = new List<ComboBox>();
+        private List<GroupBox> groupBoxes = new();
+        private List<PictureBox> pictureBoxes = new();
+        private List<ComboBox> comboBoxes = new();
+
+        private MaskParametrs MaskParametrs;
         public Form1()
         {
             InitializeComponent();
@@ -84,7 +86,6 @@ namespace Photo_Shop
                     
             }
         }
-
         private void Button_Image_Click(object sender, EventArgs e)
         {
             PictureBox pictureBox = (PictureBox)sender;
@@ -111,44 +112,51 @@ namespace Photo_Shop
                 pictureBoxImage.ChangeImg((Bitmap)pictureBox1.Image.Clone());
                 switch (comboBoxes[i].SelectedIndex)
                 {
-                    case 1:
+                    case 1: //Сложение
                         {
-                            image = pictureBoxImage + listImages[i];
-                            pictureBox1.Image = (Bitmap)image.Img.Clone();
+                            image = Image.Operation(pictureBoxImage, listImages[i], comboBoxes[i].SelectedIndex);
+                            pictureBox1.Image = (Bitmap)image?.Img?.Clone();
                             break;
                         };
                     case 2://разность
                         {
-                            image = pictureBoxImage - listImages[i]; ;
-                            pictureBox1.Image = (Bitmap)image.Img.Clone();
+                            image = Image.Operation(pictureBoxImage, listImages[i], comboBoxes[i].SelectedIndex);
+                            pictureBox1.Image = (Bitmap)image?.Img?.Clone();
                             break;
                         };
                     case 3://среднее арифметическое
                         {
-                
+                            image = Image.Operation(pictureBoxImage, listImages[i], comboBoxes[i].SelectedIndex);
+                            pictureBox1.Image = (Bitmap)image?.Img?.Clone();
                             break;
                         };
                     case 4://умножение
                         {
-                            image = pictureBoxImage * listImages[i]; ;
-                            pictureBox1.Image = (Bitmap)image.Img.Clone();
+                            image = Image.Operation(pictureBoxImage, listImages[i], comboBoxes[i].SelectedIndex);
+                            pictureBox1.Image = (Bitmap)image?.Img?.Clone();
+                            break;
                             break;
                         };
                     case 5://минимум
                         {
+                            image = Image.Operation(pictureBoxImage, listImages[i], comboBoxes[i].SelectedIndex);
+                            pictureBox1.Image = (Bitmap)image?.Img?.Clone();
+                            break;
                             break;
                         };
                     case 6://максимум
                         {
+                            image = Image.Operation(pictureBoxImage, listImages[i], comboBoxes[i].SelectedIndex);
+                            pictureBox1.Image = (Bitmap)image?.Img?.Clone();
                             break;
                         };
-                    default:
-                        {
-                            //pictureBox1.Image = (Bitmap)pictureBoxImage.Img.Clone();
-                            break;
-                        }
                 }
             }
+        }
+        private void ButtonMask_Click(object sender, EventArgs e)
+        {
+            MaskParametrs = new();
+            MaskParametrs.Show();
         }
     }
 }

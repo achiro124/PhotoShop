@@ -33,6 +33,7 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.добавитьИзображениеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.маскиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -63,7 +64,8 @@
             this.menuStrip1.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.файлToolStripMenuItem});
+            this.файлToolStripMenuItem,
+            this.маскиToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1202, 28);
@@ -85,6 +87,13 @@
             this.добавитьИзображениеToolStripMenuItem.Size = new System.Drawing.Size(259, 26);
             this.добавитьИзображениеToolStripMenuItem.Text = "Добавить изображение";
             this.добавитьИзображениеToolStripMenuItem.Click += new System.EventHandler(this.Button_AddImage_Click);
+            // 
+            // маскиToolStripMenuItem
+            // 
+            this.маскиToolStripMenuItem.Name = "маскиToolStripMenuItem";
+            this.маскиToolStripMenuItem.Size = new System.Drawing.Size(67, 24);
+            this.маскиToolStripMenuItem.Text = "Маски";
+            this.маскиToolStripMenuItem.Click += new System.EventHandler(this.ButtonMask_Click);
             // 
             // Form1
             // 
@@ -113,5 +122,6 @@
         private MenuStrip menuStrip1;
         private ToolStripMenuItem файлToolStripMenuItem;
         private ToolStripMenuItem добавитьИзображениеToolStripMenuItem;
+        private ToolStripMenuItem маскиToolStripMenuItem;
     }
 }

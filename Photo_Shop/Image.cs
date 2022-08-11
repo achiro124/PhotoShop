@@ -12,22 +12,17 @@ namespace Photo_Shop
     internal class Image
     {
         public Bitmap? Img { get; private set; }
-        //public string? Name { get; }
         public byte[]? BytesImg { get; private set; }  
-
         public Image(string file)
         {
-            //Name = NameGenerator(10);
             Img = new Bitmap(file);
             BytesImg = GetByteImg(Img);
         }
         public Image(Bitmap img)
         {
-            //Name = NameGenerator(10);
             Img = new Bitmap(img);
             BytesImg = GetByteImg(Img);
         }
-
         public void ChangeImg(Bitmap img)
         {
             Img = new Bitmap(img);
@@ -85,25 +80,12 @@ namespace Photo_Shop
 
 
         }
-       // private string NameGenerator(int x)
-       // {
-       //     Random random = new Random();
-       //     string pass = "";
-       //     var r = new Random();
-       //     while (pass.Length < x)
-       //     {
-       //         Char c = (char)r.Next(33, 125);
-       //         if (Char.IsLetterOrDigit(c))
-       //             pass += c;
-       //     }
-       //     return pass;
-       // }
-        public static Image operator+ (Image image1, Image image2)
+        public static Image Operation(Image image1, Image image2, int type)
         {
             int w;
             int h;
-            Bitmap? img1 = image1.Img;
-            Bitmap? img2 = image2.Img;
+            Bitmap img1 = image1.Img;
+            Bitmap img2 = image2.Img;
             byte[] input_bytes1 = image1.BytesImg;
             byte[] input_bytes2 = image2.BytesImg;
 
@@ -123,109 +105,99 @@ namespace Photo_Shop
             }
             byte[] bytes = new byte[w * h * 3];
 
-            Parallel.For(0, h, (i) =>
+            switch (type)
             {
-                var index = i * w;
-                for (int j = 0; j < w; j++)
-                {
-                    var idj = index + j;
-                    bytes[3 * idj + 2] = (byte)Clamp(input_bytes1[3 * idj + 2] + input_bytes2[3 * idj + 2], 0, 255);
-                    bytes[3 * idj + 1] = (byte)Clamp(input_bytes1[3 * idj + 1] + input_bytes2[3 * idj + 1], 0, 255);
-                    bytes[3 * idj + 0] = (byte)Clamp(input_bytes1[3 * idj + 0] + input_bytes2[3 * idj + 0], 0, 255);
+                case 1:
+                    Parallel.For(0, h, (i) =>
+                    {
+                        var index = i * w;
+                        for (int j = 0; j < w; j++)
+                        {
+                            var idj = index + j;
+                            bytes[3 * idj + 2] = (byte)Clamp(input_bytes1[3 * idj + 2] + input_bytes2[3 * idj + 2], 0, 255);
+                            bytes[3 * idj + 1] = (byte)Clamp(input_bytes1[3 * idj + 1] + input_bytes2[3 * idj + 1], 0, 255);
+                            bytes[3 * idj + 0] = (byte)Clamp(input_bytes1[3 * idj + 0] + input_bytes2[3 * idj + 0], 0, 255);
 
-                }
-            });
+                        }
+                    });
+                    break;
+                case 2:
+                    Parallel.For(0, h, (i) =>
+                    {
+                        var index = i * w;
+                        for (int j = 0; j < w; j++)
+                        {
+                            var idj = index + j;
+                            bytes[3 * idj + 2] = (byte)Clamp(input_bytes1[3 * idj + 2] - input_bytes2[3 * idj + 2], 0, 255);
+                            bytes[3 * idj + 1] = (byte)Clamp(input_bytes1[3 * idj + 1] - input_bytes2[3 * idj + 1], 0, 255);
+                            bytes[3 * idj + 0] = (byte)Clamp(input_bytes1[3 * idj + 0] - input_bytes2[3 * idj + 0], 0, 255);
+
+                        }
+                    });
+                    break;
+                case 3:
+                    Parallel.For(0, h, (i) =>
+                    {
+                        var index = i * w;
+                        for (int j = 0; j < w; j++)
+                        {
+                            var idj = index + j;
+                            bytes[3 * idj + 2] = (byte)Clamp((input_bytes1[3 * idj + 2] + input_bytes2[3 * idj + 2]) / 2, 0, 255);
+                            bytes[3 * idj + 1] = (byte)Clamp((input_bytes1[3 * idj + 1] + input_bytes2[3 * idj + 1]) / 2, 0, 255);
+                            bytes[3 * idj + 0] = (byte)Clamp((input_bytes1[3 * idj + 0] + input_bytes2[3 * idj + 0]) / 2, 0, 255);
+
+                        }
+                    });
+                    break;
+                case 4:
+                    Parallel.For(0, h, (i) =>
+                    {
+                        var index = i * w;
+                        for (int j = 0; j < w; j++)
+                        {
+                            var idj = index + j;
+                            bytes[3 * idj + 2] = (byte)Clamp(input_bytes1[3 * idj + 2] * input_bytes2[3 * idj + 2], 0, 255);
+                            bytes[3 * idj + 1] = (byte)Clamp(input_bytes1[3 * idj + 1] * input_bytes2[3 * idj + 1], 0, 255);
+                            bytes[3 * idj + 0] = (byte)Clamp(input_bytes1[3 * idj + 0] * input_bytes2[3 * idj + 0], 0, 255);
+
+                        }
+                    });
+                    break;
+                case 5:
+                    Parallel.For(0, h, (i) =>
+                    {
+                        var index = i * w;
+                        for (int j = 0; j < w; j++)
+                        {
+                            var idj = index + j;
+                            bytes[3 * idj + 2] = input_bytes1[3 * idj + 2] < input_bytes2[3 * idj + 2] ? input_bytes1[3 * idj + 2] : input_bytes2[3 * idj + 2];
+                            bytes[3 * idj + 1] = input_bytes1[3 * idj + 1] < input_bytes2[3 * idj + 1] ? input_bytes1[3 * idj + 1] : input_bytes2[3 * idj + 1];
+                            bytes[3 * idj + 0] = input_bytes1[3 * idj + 0] < input_bytes2[3 * idj + 0] ? input_bytes1[3 * idj + 0] : input_bytes2[3 * idj + 0];
+
+                        }
+                    });
+                    break;
+                case 6:
+                    Parallel.For(0, h, (i) =>
+                    {
+                        var index = i * w;
+                        for (int j = 0; j < w; j++)
+                        {
+                            var idj = index + j;
+                            bytes[3 * idj + 2] = input_bytes1[3 * idj + 2] > input_bytes2[3 * idj + 2] ? input_bytes1[3 * idj + 2] : input_bytes2[3 * idj + 2];
+                            bytes[3 * idj + 1] = input_bytes1[3 * idj + 1] > input_bytes2[3 * idj + 1] ? input_bytes1[3 * idj + 1] : input_bytes2[3 * idj + 1];
+                            bytes[3 * idj + 0] = input_bytes1[3 * idj + 0] > input_bytes2[3 * idj + 0] ? input_bytes1[3 * idj + 0] : input_bytes2[3 * idj + 0];
+
+                        }
+                    });
+                    break;
+            }
             Bitmap img_ret = new Bitmap(w, h, PixelFormat.Format24bppRgb);
             img_ret.SetResolution(img1.HorizontalResolution, img1.VerticalResolution);
             WriteImageBytes(img_ret, bytes);
             Image outImg = new Image(img_ret);
             return outImg;
-        }
-        public static Image operator -(Image image1, Image image2)
-        {
-            int w;
-            int h;
-            Bitmap? img1 = image1.Img;
-            Bitmap? img2 = image2.Img;
-            byte[] input_bytes1 = image1.BytesImg;
-            byte[] input_bytes2 = image2.BytesImg;
 
-            if (img1?.Height * img1?.Width > img2?.Height * img2?.Width)
-            {
-                w = img1.Width;
-                h = img1.Height;
-                img2 = ResizeImage(img2, w, h);
-                input_bytes2 = GetByteImg(img2);
-            }
-            else
-            {
-                w = img2.Width;
-                h = img2.Height;
-                img1 = ResizeImage(img1, w, h);
-                input_bytes1 = GetByteImg(img1);
-            }
-            byte[] bytes = new byte[w * h * 3];
-
-            Parallel.For(0, h, (i) =>
-            {
-                var index = i * w;
-                for (int j = 0; j < w; j++)
-                {
-                    var idj = index + j;
-                    bytes[3 * idj + 2] = (byte)Clamp(input_bytes1[3 * idj + 2] - input_bytes2[3 * idj + 2], 0, 255);
-                    bytes[3 * idj + 1] = (byte)Clamp(input_bytes1[3 * idj + 1] - input_bytes2[3 * idj + 1], 0, 255);
-                    bytes[3 * idj + 0] = (byte)Clamp(input_bytes1[3 * idj + 0] - input_bytes2[3 * idj + 0], 0, 255);
-
-                }
-            });
-            Bitmap img_ret = new Bitmap(w, h, PixelFormat.Format24bppRgb);
-            img_ret.SetResolution(img1.HorizontalResolution, img1.VerticalResolution);
-            WriteImageBytes(img_ret, bytes);
-            Image outImg = new Image(img_ret);
-            return outImg;
-        }
-        public static Image operator *(Image image1, Image image2)
-        {
-            int w;
-            int h;
-            Bitmap? img1 = image1.Img;
-            Bitmap? img2 = image2.Img;
-            byte[] input_bytes1 = image1.BytesImg;
-            byte[] input_bytes2 = image2.BytesImg;
-
-            if (img1?.Height * img1?.Width > img2?.Height * img2?.Width)
-            {
-                w = img1.Width;
-                h = img1.Height;
-                img2 = ResizeImage(img2, w, h);
-                input_bytes2 = GetByteImg(img2);
-            }
-            else
-            {
-                w = img2.Width;
-                h = img2.Height;
-                img1 = ResizeImage(img1, w, h);
-                input_bytes1 = GetByteImg(img1);
-            }
-            byte[] bytes = new byte[w * h * 3];
-
-            Parallel.For(0, h, (i) =>
-            {
-                var index = i * w;
-                for (int j = 0; j < w; j++)
-                {
-                    var idj = index + j;
-                    bytes[3 * idj + 2] = (byte)Clamp(input_bytes1[3 * idj + 2] * input_bytes2[3 * idj + 2], 0, 255);
-                    bytes[3 * idj + 1] = (byte)Clamp(input_bytes1[3 * idj + 1] * input_bytes2[3 * idj + 1], 0, 255);
-                    bytes[3 * idj + 0] = (byte)Clamp(input_bytes1[3 * idj + 0] * input_bytes2[3 * idj + 0], 0, 255);
-
-                }
-            });
-            Bitmap img_ret = new Bitmap(w, h, PixelFormat.Format24bppRgb);
-            img_ret.SetResolution(img1.HorizontalResolution, img1.VerticalResolution);
-            WriteImageBytes(img_ret, bytes);
-            Image outImg = new Image(img_ret);
-            return outImg;
         }
         private static Bitmap ResizeImage(System.Drawing.Image image, int width, int height)
         {
