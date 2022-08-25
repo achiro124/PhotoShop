@@ -2,14 +2,15 @@ namespace Photo_Shop
 {
     public partial class Form1 : Form
     {
-        private Image? pictureBoxImage;
-        private Image? copyPicrureBoxImage;
+        private Image pictureBoxImage;
+        private Image copyPicrureBoxImage;
         private List<Image> listImages = new();
 
         int wg = 0;
         private List<GroupBox> groupBoxes = new();
         private List<PictureBox> pictureBoxes = new();
         private List<ComboBox> comboBoxes = new();
+        private List<Button> buttonBoxes = new();
 
         private MaskParametrs MaskParametrs;
         public Form1()
@@ -73,14 +74,25 @@ namespace Photo_Shop
                     comboBoxes.Add(comboBox);
                     groupBox.Controls.Add(comboBox);
 
+                    var buttonBox = new Button
+                    {
+                        Name = "buttonBox" + (n).ToString(),
+                        Location = new Point(238, 0),
+                        Size = new Size(28, 28),
+                        Text = "X"
+                    };
+                    buttonBox.Click += new EventHandler(Button_DeleteImg_Click);
+                    buttonBoxes.Add(buttonBox);
+                    groupBox.Controls.Add(buttonBox);
+
                     groupBoxes.Add(groupBox);
                     panel1.Controls.Add(groupBox);
                     wg = groupBox.Location.Y;
                 }
                 if (listImages.Count > 0)
                 {
-                    //pictureBox1.Image = (Bitmap)listImages[listImages.Count - 1].Img.Clone();
-                    //pictureBoxImage = listImages[listImages.Count - 1];
+                    pictureBox1.Image = (Bitmap)listImages[listImages.Count - 1].Img.Clone();
+                    pictureBoxImage = new(listImages[listImages.Count - 1]);
                     //copyPicrureBoxImage = pictureBoxImage;
                 }
                     
@@ -94,60 +106,103 @@ namespace Photo_Shop
                 if (pictureBox != null && pictureBox?.Name == pictureBoxes[i].Name)
                 {
                     pictureBox1.Image = (Bitmap)pictureBoxes[i].Image.Clone();
-                    //pictureBoxImage = listImages[i];
+                    pictureBoxImage = new(listImages[i]);
                     //copyPicrureBoxImage = pictureBoxImage;
-                    //comboBoxes[i].SelectedItem = "нет";
+                    comboBoxes[i].SelectedItem = "нет";
                     break;
                 }
             }
         }
+        private void Button_DeleteImg_Click(object sender, EventArgs e)
+        {
+            int loc = 0;
+            Button temp = sender as Button;
+            var name = temp?.Name;
+            int index = 0;
+            int k = 3;
+            for (int i = 0; i < listImages.Count(); i++)
+            {
+                if (buttonBoxes[i].Name == name)
+                {
+                    index = i;
+                    groupBoxes[i].Dispose();
+                    groupBoxes.RemoveAt(i);
+                    listImages.RemoveAt(i);
+                    comboBoxes.RemoveAt(i);
+                    //nummas.RemoveAt(i);
+                    pictureBoxes.RemoveAt(i);
+                    buttonBoxes.RemoveAt(i);
+                    //while (k > 0)
+                    //{
+                    //    checkmas.RemoveAt(i);
+                    //    k--;
+                    //}
+                    //CopyImage.RemoveAt(i);
+                    //numUpDownmas.RemoveAt(i);
+                    //n--;
+                    break;
+                }
+            }
+            if (index != 0)
+            {
+                loc = groupBoxes[index - 1].Location.Y;
+            }
+            for (int i = index; i < listImages.Count(); i++)
+            {
+                groupBoxes[i].Location = new Point(5, i == 0 ? loc : loc + 210);
+                groupBoxes[i].Name = "groupBox" + (i + 1).ToString();
+                groupBoxes[i].Text = "Изображение №" + (i + 1).ToString();
+                loc = groupBoxes[i].Location.Y;
+            }
+            if(groupBoxes.Count() > 0)
+                wg = groupBoxes.Last().Location.Y;
+        }
         private void Change_ComboBox(object sender, EventArgs e)
         {
-            pictureBox1.Image = Image.BlackQuad(new Bitmap(990, 900));
-            pictureBoxImage = new Image((Bitmap)pictureBox1.Image.Clone());
+            pictureBox1.Image = (Bitmap)pictureBoxImage.Img.Clone();
+            //pictureBoxImage = new Image((Bitmap)pictureBox1.Image.Clone());
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             for (int i = listImages.Count - 1; i >= 0; i--)
             {
                 Image image;
-                pictureBoxImage.ChangeImg((Bitmap)pictureBox1.Image.Clone());
+                //pictureBoxImage.ChangeImg((Bitmap)pictureBox1.Image.Clone());
+                copyPicrureBoxImage = new((Bitmap)pictureBox1.Image.Clone());
                 switch (comboBoxes[i].SelectedIndex)
                 {
                     case 1: //Сложение
                         {
-                            image = Image.Operation(pictureBoxImage, listImages[i], comboBoxes[i].SelectedIndex);
-                            pictureBox1.Image = (Bitmap)image?.Img?.Clone();
+                            image = Image.OperationSum(copyPicrureBoxImage, listImages[i]);
+                            pictureBox1.Image = (Bitmap)image.Img?.Clone();
                             break;
                         };
                     case 2://разность
                         {
-                            image = Image.Operation(pictureBoxImage, listImages[i], comboBoxes[i].SelectedIndex);
-                            pictureBox1.Image = (Bitmap)image?.Img?.Clone();
+                            image = Image.OperationDiff(copyPicrureBoxImage, listImages[i]);
+                            pictureBox1.Image = (Bitmap)image.Img?.Clone();
                             break;
                         };
                     case 3://среднее арифметическое
                         {
-                            image = Image.Operation(pictureBoxImage, listImages[i], comboBoxes[i].SelectedIndex);
-                            pictureBox1.Image = (Bitmap)image?.Img?.Clone();
+                            image = Image.OperationAvg(copyPicrureBoxImage, listImages[i]);
+                            pictureBox1.Image = (Bitmap)image.Img?.Clone();
                             break;
                         };
                     case 4://умножение
                         {
-                            image = Image.Operation(pictureBoxImage, listImages[i], comboBoxes[i].SelectedIndex);
-                            pictureBox1.Image = (Bitmap)image?.Img?.Clone();
-                            break;
+                            image = Image.OperationMult(copyPicrureBoxImage, listImages[i]);
+                            pictureBox1.Image = (Bitmap)image.Img?.Clone();
                             break;
                         };
                     case 5://минимум
                         {
-                            image = Image.Operation(pictureBoxImage, listImages[i], comboBoxes[i].SelectedIndex);
-                            pictureBox1.Image = (Bitmap)image?.Img?.Clone();
-                            break;
+                            image = Image.OperationMin(copyPicrureBoxImage, listImages[i]);
+                            pictureBox1.Image = (Bitmap)image.Img?.Clone();
                             break;
                         };
                     case 6://максимум
                         {
-                            image = Image.Operation(pictureBoxImage, listImages[i], comboBoxes[i].SelectedIndex);
-                            pictureBox1.Image = (Bitmap)image?.Img?.Clone();
+                            image = Image.OperationMax(copyPicrureBoxImage, listImages[i]);
+                            pictureBox1.Image = (Bitmap)image.Img?.Clone();
                             break;
                         };
                 }
