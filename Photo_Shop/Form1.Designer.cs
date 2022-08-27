@@ -86,14 +86,14 @@
             this.добавитьИзображениеToolStripMenuItem.Name = "добавитьИзображениеToolStripMenuItem";
             this.добавитьИзображениеToolStripMenuItem.Size = new System.Drawing.Size(259, 26);
             this.добавитьИзображениеToolStripMenuItem.Text = "Добавить изображение";
-            this.добавитьИзображениеToolStripMenuItem.Click += new System.EventHandler(this.Button_AddImage_Click);
+            this.добавитьИзображениеToolStripMenuItem.Click += new System.EventHandler(this.Button_Add_Image_Click);
             // 
             // маскиToolStripMenuItem
             // 
             this.маскиToolStripMenuItem.Name = "маскиToolStripMenuItem";
             this.маскиToolStripMenuItem.Size = new System.Drawing.Size(67, 24);
             this.маскиToolStripMenuItem.Text = "Маски";
-            this.маскиToolStripMenuItem.Click += new System.EventHandler(this.ButtonMask_Click);
+            this.маскиToolStripMenuItem.Click += new System.EventHandler(this.Button_Mask_Click);
             // 
             // Form1
             // 

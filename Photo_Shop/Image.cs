@@ -462,6 +462,38 @@ namespace Photo_Shop
             Image outImg = new Image(img_ret);
             return outImg;
         }
+        public Image ChangeColorChanel(bool R, bool G, bool B)
+        {
+            int w = Img.Width;
+            int h = Img.Height;
+            byte[] input_bytes1 = BytesImg;
+            byte[] bytes = new byte[w * h * 3];
+
+            Parallel.For(0, h, (i) =>
+            {
+                var index = i * w;
+                for (int j = 0; j < w; j++)
+                {
+                    var idj = index + j;
+                    if (!R)
+                        bytes[3 * idj + 2] = 0;
+                    else
+                        bytes[3 * idj + 2] = input_bytes1[3 * idj + 2];
+                    if (!G)
+                        bytes[3 * idj + 1] = 0;
+                    else
+                        bytes[3 * idj + 1] = input_bytes1[3 * idj + 1];
+                    if (!B)
+                        bytes[3 * idj + 0] = 0;
+                    else
+                        bytes[3 * idj + 0] = input_bytes1[3 * idj + 0];
+                }
+            });
+            Bitmap img_ret = new Bitmap(w, h, PixelFormat.Format24bppRgb);
+            img_ret.SetResolution(Img.HorizontalResolution, Img.VerticalResolution);
+            WriteImageBytes(img_ret, bytes);
+            return new Image(img_ret);
+        }
         private static Bitmap ResizeImage(System.Drawing.Image image, int width, int height)
         {
             var destRect = new Rectangle(0, 0, width, height);

@@ -5,20 +5,23 @@ namespace Photo_Shop
         private Image pictureBoxImage;
         private Image copyPicrureBoxImage;
         private List<Image> listImages = new();
+        private List<Image> copyListImages = new();
 
         int wg = 0;
+        int index;
         private List<GroupBox> groupBoxes = new();
         private List<PictureBox> pictureBoxes = new();
         private List<ComboBox> comboBoxes = new();
         private List<Button> buttonBoxes = new();
+        private List<CheckBox> checkBoxes = new();
+        private List<NumericUpDown> numericUpDownBoxes = new();
 
         private MaskParametrs MaskParametrs;
         public Form1()
         {
             InitializeComponent();
         }
-
-        private void Button_AddImage_Click(object sender, EventArgs e)
+        private void Button_Add_Image_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Multiselect = true;
@@ -33,6 +36,7 @@ namespace Photo_Shop
                     try
                     {
                         listImages.Add(new Image(file));
+                        copyListImages.Add(new Image(file));
                     }
                     catch
                     {
@@ -43,8 +47,8 @@ namespace Photo_Shop
                     {
                         Name = "groupBox" + (n).ToString(),
                         BackColor = Color.Gray,
-                        Size = new Size(265, 196),
-                        Location = new Point(5, n == 1 ? wg : wg + 210),
+                        Size = new Size(265, 226),
+                        Location = new Point(5, n == 1 ? wg : wg + 240),
                         Text = "Изображение №" + (n).ToString()
                         
                     };
@@ -52,10 +56,10 @@ namespace Photo_Shop
                     var pictureBox = new PictureBox
                     {
                         Name = "pictureBox" + (n).ToString(),
-                        Size = new Size(180, 120),
+                        Size = new Size(195, 120),
                         BorderStyle = BorderStyle.FixedSingle,
                         SizeMode = PictureBoxSizeMode.Zoom,
-                        Location = new Point(70, 26),
+                        Location = new Point(55, 26),
                         Image = (Bitmap)listImages[listImages.Count - 1].Img.Clone()
                     };
                     pictureBox.Click += new EventHandler(Button_Image_Click);
@@ -65,7 +69,7 @@ namespace Photo_Shop
                     var comboBox = new ComboBox
                     {
                         Name = "comboBox" + (n).ToString(),
-                        Location = new Point(70, 150),
+                        Location = new Point(65, 150),
                         Size = new Size(180, 24),
                         Items = { "нет", "сумма", "разность", "среднее арифм.", "умножение", "минимум", "максимум" },
                         SelectedItem = "нет",
@@ -81,9 +85,78 @@ namespace Photo_Shop
                         Size = new Size(28, 28),
                         Text = "X"
                     };
-                    buttonBox.Click += new EventHandler(Button_DeleteImg_Click);
+                    buttonBox.Click += new EventHandler(Button_Delete_Img_Click);
                     buttonBoxes.Add(buttonBox);
                     groupBox.Controls.Add(buttonBox);
+
+                    var checkbox1 = new CheckBox
+                    {
+                        Name = "checkBox1-" + (n + 1).ToString(),
+                        Location = new Point(9, 40),
+                        Size = new Size(40, 23),
+                        Font = new Font("Times New Roman", 9),
+                        Text = "R",
+                        Checked = true,
+                    };
+                    checkbox1.Click += new EventHandler(Change_CheckBox_Click);
+                    var checkbox2 = new CheckBox
+                    {
+                        Name = "checkBox2-" + (n + 1).ToString(),
+                        Location = new Point(9, 80),
+                        Size = new Size(40, 23),
+                        Font = new Font("Times New Roman", 9),
+                        Text = "G",
+                        Checked = true
+                    };
+                    checkbox2.Click += new EventHandler(Change_CheckBox_Click);
+                    var checkbox3 = new CheckBox
+                    {
+                        Name = "checkBox3-" + (n + 1).ToString(),
+                        Location = new Point(9, 120),
+                        Size = new Size(40, 23),
+                        Font = new Font("Times New Roman", 9),
+                        Text = "B",
+                        Checked = true
+                    };
+
+
+                    checkbox3.Click += new EventHandler(Change_CheckBox_Click);
+                    checkBoxes.Add(checkbox1);
+                    checkBoxes.Add(checkbox2);
+                    checkBoxes.Add(checkbox3);
+                    groupBox.Controls.Add(checkbox1);
+                    groupBox.Controls.Add(checkbox2);
+                    groupBox.Controls.Add(checkbox3);
+
+
+                    var label1 = new Label
+                    {
+                        Name = "labell" + (n + 1).ToString(),
+                        Location = new Point(50, 188),
+                        Size = new Size(115, 18),
+                        Font = new Font("Times New Roman", 10),
+                        Text = "Прозрачность:",
+                    };
+                    var numUpDown = new NumericUpDown
+                    {
+                        Name = "numUpDown" + (n + 1).ToString(),
+                        Location = new Point(165, 185),
+                        Size = new Size(50, 22),
+                        Value = 100,
+                        Maximum = 100
+                    };
+                    var label2 = new Label
+                    {
+                        Name = "labelll" + (n + 1).ToString(),
+                        Location = new Point(220, 188),
+                        Size = new Size(18, 18),
+                        Font = new Font("Times New Roman", 10),
+                        Text = "%"
+                    };
+                    numericUpDownBoxes.Add(numUpDown);
+                    groupBox.Controls.Add(label1);
+                    groupBox.Controls.Add(label2);
+                    groupBox.Controls.Add(numUpDown);
 
                     groupBoxes.Add(groupBox);
                     panel1.Controls.Add(groupBox);
@@ -92,8 +165,10 @@ namespace Photo_Shop
                 if (listImages.Count > 0)
                 {
                     pictureBox1.Image = (Bitmap)listImages[listImages.Count - 1].Img.Clone();
-                    pictureBoxImage = new(listImages[listImages.Count - 1]);
+                    pictureBoxImage = copyListImages[copyListImages.Count - 1];
+                    index = copyListImages.Count - 1;
                     //copyPicrureBoxImage = pictureBoxImage;
+
                 }
                     
             }
@@ -105,21 +180,21 @@ namespace Photo_Shop
             {
                 if (pictureBox != null && pictureBox?.Name == pictureBoxes[i].Name)
                 {
-                    pictureBox1.Image = (Bitmap)pictureBoxes[i].Image.Clone();
-                    pictureBoxImage = new(listImages[i]);
+                    pictureBox1.Image = (Bitmap)copyListImages[i].Img.Clone();
+                    pictureBoxImage = copyListImages[i];
+                    index = i;
                     //copyPicrureBoxImage = pictureBoxImage;
                     comboBoxes[i].SelectedItem = "нет";
                     break;
                 }
             }
         }
-        private void Button_DeleteImg_Click(object sender, EventArgs e)
+        private void Button_Delete_Img_Click(object sender, EventArgs e)
         {
             int loc = 0;
             Button temp = sender as Button;
             var name = temp?.Name;
             int index = 0;
-            int k = 3;
             for (int i = 0; i < listImages.Count(); i++)
             {
                 if (buttonBoxes[i].Name == name)
@@ -128,19 +203,18 @@ namespace Photo_Shop
                     groupBoxes[i].Dispose();
                     groupBoxes.RemoveAt(i);
                     listImages.RemoveAt(i);
+                    copyListImages.RemoveAt(i);
                     comboBoxes.RemoveAt(i);
                     //nummas.RemoveAt(i);
                     pictureBoxes.RemoveAt(i);
                     buttonBoxes.RemoveAt(i);
-                    //while (k > 0)
-                    //{
-                    //    checkmas.RemoveAt(i);
-                    //    k--;
-                    //}
-                    //CopyImage.RemoveAt(i);
-                    //numUpDownmas.RemoveAt(i);
-                    //n--;
-                    break;
+                    for(int j = 0; j < 3; j ++)
+                    {
+                    
+                        checkBoxes.RemoveAt(i);
+                    }
+                   //numUpDownmas.RemoveAt(i);
+                   break;
                 }
             }
             if (index != 0)
@@ -149,7 +223,7 @@ namespace Photo_Shop
             }
             for (int i = index; i < listImages.Count(); i++)
             {
-                groupBoxes[i].Location = new Point(5, i == 0 ? loc : loc + 210);
+                groupBoxes[i].Location = new Point(5, i == 0 ? loc : loc + 240);
                 groupBoxes[i].Name = "groupBox" + (i + 1).ToString();
                 groupBoxes[i].Text = "Изображение №" + (i + 1).ToString();
                 loc = groupBoxes[i].Location.Y;
@@ -159,59 +233,91 @@ namespace Photo_Shop
         }
         private void Change_ComboBox(object sender, EventArgs e)
         {
+            AllOperation();
+        }
+        private void Button_Mask_Click(object sender, EventArgs e)
+        {
+            MaskParametrs = new();
+            MaskParametrs.Show();
+        }
+        private void Change_CheckBox_Click(object sender, EventArgs e)
+        {
+            CheckBox checkBox = sender as CheckBox;
+            bool R = true, G = true, B = true;
+            int k = 0;
+            for (int i = 0; i < checkBoxes.Count(); i++)
+            {
+                if (checkBox.Name == checkBoxes[i].Name)
+                {
+                    k = i / 3;
+                    break;
+                }
+            }
+            if (!checkBoxes[3 * k].Checked)
+            {
+                R = false;
+            }
+            if (!checkBoxes[3 * k + 1].Checked)
+            {
+                G = false;
+            }
+            if (!checkBoxes[3 * k + 2].Checked)
+            {
+                B = false;
+            }
+            copyListImages[k] = listImages[k].ChangeColorChanel(R,G,B);
+            if (k == index)
+                pictureBoxImage = copyListImages[k];
+            AllOperation();
+        }
+        private void AllOperation()
+        {
             pictureBox1.Image = (Bitmap)pictureBoxImage.Img.Clone();
-            //pictureBoxImage = new Image((Bitmap)pictureBox1.Image.Clone());
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             for (int i = listImages.Count - 1; i >= 0; i--)
             {
                 Image image;
-                //pictureBoxImage.ChangeImg((Bitmap)pictureBox1.Image.Clone());
                 copyPicrureBoxImage = new((Bitmap)pictureBox1.Image.Clone());
                 switch (comboBoxes[i].SelectedIndex)
                 {
                     case 1: //Сложение
                         {
-                            image = Image.OperationSum(copyPicrureBoxImage, listImages[i]);
+                            image = Image.OperationSum(copyPicrureBoxImage, copyListImages[i]);
                             pictureBox1.Image = (Bitmap)image.Img?.Clone();
                             break;
                         };
                     case 2://разность
                         {
-                            image = Image.OperationDiff(copyPicrureBoxImage, listImages[i]);
+                            image = Image.OperationDiff(copyPicrureBoxImage, copyListImages[i]);
                             pictureBox1.Image = (Bitmap)image.Img?.Clone();
                             break;
                         };
                     case 3://среднее арифметическое
                         {
-                            image = Image.OperationAvg(copyPicrureBoxImage, listImages[i]);
+                            image = Image.OperationAvg(copyPicrureBoxImage, copyListImages[i]);
                             pictureBox1.Image = (Bitmap)image.Img?.Clone();
                             break;
                         };
                     case 4://умножение
                         {
-                            image = Image.OperationMult(copyPicrureBoxImage, listImages[i]);
+                            image = Image.OperationMult(copyPicrureBoxImage, copyListImages[i]);
                             pictureBox1.Image = (Bitmap)image.Img?.Clone();
                             break;
                         };
                     case 5://минимум
                         {
-                            image = Image.OperationMin(copyPicrureBoxImage, listImages[i]);
+                            image = Image.OperationMin(copyPicrureBoxImage, copyListImages[i]);
                             pictureBox1.Image = (Bitmap)image.Img?.Clone();
                             break;
                         };
                     case 6://максимум
                         {
-                            image = Image.OperationMax(copyPicrureBoxImage, listImages[i]);
+                            image = Image.OperationMax(copyPicrureBoxImage, copyListImages[i]);
                             pictureBox1.Image = (Bitmap)image.Img?.Clone();
                             break;
                         };
                 }
             }
-        }
-        private void ButtonMask_Click(object sender, EventArgs e)
-        {
-            MaskParametrs = new();
-            MaskParametrs.Show();
         }
     }
 }
