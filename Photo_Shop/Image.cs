@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Photo_Shop
 {
@@ -43,6 +44,14 @@ namespace Photo_Shop
         private static byte[] GetImgBytes24(Bitmap img_out)
         {
             byte[] bytes = new byte[img_out.Width * img_out.Height * 3];
+            var data = img_out.LockBits(new Rectangle(0, 0, img_out.Width, img_out.Height), ImageLockMode.ReadOnly, img_out.PixelFormat);
+            Marshal.Copy(data.Scan0, bytes, 0, bytes.Length);
+            img_out.UnlockBits(data);
+            return bytes;
+        }
+        private static byte[] GetImgBytes32(Bitmap img_out)
+        {
+            byte[] bytes = new byte[img_out.Width * img_out.Height * 4];
             var data = img_out.LockBits(new Rectangle(0, 0, img_out.Width, img_out.Height), ImageLockMode.ReadOnly, img_out.PixelFormat);
             Marshal.Copy(data.Scan0, bytes, 0, bytes.Length);
             img_out.UnlockBits(data);
@@ -493,6 +502,41 @@ namespace Photo_Shop
             img_ret.SetResolution(Img.HorizontalResolution, Img.VerticalResolution);
             WriteImageBytes(img_ret, bytes);
             return new Image(img_ret);
+        }
+        public Image ChangeClarity(int clarity)
+        {
+            int w = Img.Width;
+            int h = Img.Height;
+            byte[]  input_bytes1 = new byte[0];
+            byte[] bytes = new byte[w * h * 4];
+
+            using (Bitmap img_out1 = new Bitmap(w, h, PixelFormat.Format32bppArgb))
+            {
+                img_out1.SetResolution(Img.HorizontalResolution, Img.VerticalResolution);
+
+                using (var g = Graphics.FromImage(img_out1))
+                {
+                    g.DrawImageUnscaled(Img, 0, 0);
+                }
+                input_bytes1 = GetImgBytes32(img_out1);
+
+                Parallel.For(0, h, (i) =>
+                {
+                    var index = i * w;
+                    for (int j = 0; j < w; j++)
+                    {
+                        var idj = index + j;
+                        bytes[4 * idj + 3] = (byte)(clarity * 255 / 100);
+                        bytes[4 * idj + 2] = input_bytes1[4 * idj + 2];
+                        bytes[4 * idj + 1] = input_bytes1[4 * idj + 1];
+                        bytes[4 * idj + 0] = input_bytes1[4 * idj + 0];
+                    }
+                });
+                Bitmap img_ret = new Bitmap(w, h, PixelFormat.Format32bppArgb);
+                img_ret.SetResolution(Img.HorizontalResolution, Img.VerticalResolution);
+                WriteImageBytes(img_ret, bytes);
+                return new(img_ret);
+            }
         }
         private static Bitmap ResizeImage(System.Drawing.Image image, int width, int height)
         {

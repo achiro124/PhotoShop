@@ -153,6 +153,7 @@ namespace Photo_Shop
                         Font = new Font("Times New Roman", 10),
                         Text = "%"
                     };
+                    numUpDown.ValueChanged += new EventHandler(Change_NumericUpDown);
                     numericUpDownBoxes.Add(numUpDown);
                     groupBox.Controls.Add(label1);
                     groupBox.Controls.Add(label2);
@@ -205,15 +206,14 @@ namespace Photo_Shop
                     listImages.RemoveAt(i);
                     copyListImages.RemoveAt(i);
                     comboBoxes.RemoveAt(i);
-                    //nummas.RemoveAt(i);
+                    numericUpDownBoxes.RemoveAt(i);
                     pictureBoxes.RemoveAt(i);
                     buttonBoxes.RemoveAt(i);
                     for(int j = 0; j < 3; j ++)
                     {
                     
-                        checkBoxes.RemoveAt(i);
+                        checkBoxes.RemoveAt(i * 3);
                     }
-                   //numUpDownmas.RemoveAt(i);
                    break;
                 }
             }
@@ -234,6 +234,22 @@ namespace Photo_Shop
         private void Change_ComboBox(object sender, EventArgs e)
         {
             AllOperation();
+        }
+        private void Change_NumericUpDown(object sender, EventArgs e)
+        {
+            NumericUpDown numericUpDown = sender as NumericUpDown;
+            for (int i = 0; i < listImages.Count(); i++)
+            {
+                if (numericUpDown.Name == numericUpDownBoxes[i].Name)
+                {
+                    int clarity = (int)numericUpDownBoxes[i].Value;
+                    copyListImages[i] = copyListImages[i].ChangeClarity(clarity);
+                    if (i == index)
+                        pictureBoxImage = copyListImages[i];
+                    AllOperation();
+                    break;
+                }
+            }
         }
         private void Button_Mask_Click(object sender, EventArgs e)
         {
@@ -266,6 +282,12 @@ namespace Photo_Shop
                 B = false;
             }
             copyListImages[k] = listImages[k].ChangeColorChanel(R,G,B);
+            if ((int)numericUpDownBoxes[k].Value != 100) //Проверка, изменяется ли прозрачность у фотографии или нет
+            {
+                int clarity = (int)numericUpDownBoxes[k].Value;
+                copyListImages[k] = copyListImages[k].ChangeClarity(clarity);
+            }
+
             if (k == index)
                 pictureBoxImage = copyListImages[k];
             AllOperation();
