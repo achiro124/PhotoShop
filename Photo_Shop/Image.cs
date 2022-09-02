@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Photo_Shop
 {
-    internal struct Image
+    public struct Image
     {
         public Bitmap Img { get; private set; }
         public byte[] BytesImg { get; private set; }  

@@ -1,3 +1,5 @@
+using System.Windows.Forms;
+
 namespace Photo_Shop
 {
     public partial class Form1 : Form
@@ -11,7 +13,7 @@ namespace Photo_Shop
         int index;
         private List<GroupBox> groupBoxes = new();
         private List<PictureBox> pictureBoxes = new();
-        private List<ComboBox> comboBoxes = new();
+        private List<ListBox> listBoxes = new();
         private List<Button> buttonBoxes = new();
         private List<CheckBox> checkBoxes = new();
         private List<NumericUpDown> numericUpDownBoxes = new();
@@ -23,11 +25,10 @@ namespace Photo_Shop
         }
         private void Button_Add_Image_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
+            OpenFileDialog openFileDialog = new OpenFileDialog(); 
             openFileDialog.Multiselect = true;
             openFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
             openFileDialog.Filter = "Картинки (png, jpg, bmp, gif) |*.png;*.jpg;*.bmp;*.gif|All files (*.*)|*.*";
-            //saveFileDialog1.Filter = "Картинки (png, jpg, bmp, gif) |*.jpg;*.bmp;*.gif|All files (*.*)|*.*";
             openFileDialog.RestoreDirectory = true;
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -66,17 +67,17 @@ namespace Photo_Shop
                     pictureBoxes.Add(pictureBox);
                     groupBox.Controls.Add(pictureBox);
 
-                    var comboBox = new ComboBox
+                    var listBox = new ListBox
                     {
-                        Name = "comboBox" + (n).ToString(),
+                        Name = "listBox" + (n).ToString(),
                         Location = new Point(65, 150),
                         Size = new Size(180, 24),
                         Items = { "нет", "сумма", "разность", "среднее арифм.", "умножение", "минимум", "максимум" },
                         SelectedItem = "нет",
                     };
-                    comboBox.SelectedValueChanged += new EventHandler(Change_ComboBox);
-                    comboBoxes.Add(comboBox);
-                    groupBox.Controls.Add(comboBox);
+                    listBox.SelectedValueChanged += new EventHandler(Change_ComboBox);
+                    listBoxes.Add(listBox);
+                    groupBox.Controls.Add(listBox);
 
                     var buttonBox = new Button
                     {
@@ -171,7 +172,8 @@ namespace Photo_Shop
                     //copyPicrureBoxImage = pictureBoxImage;
 
                 }
-                    
+
+                сохранитьКакToolStripMenuItem.Enabled = true;
             }
         }
         private void Button_Image_Click(object sender, EventArgs e)
@@ -185,7 +187,7 @@ namespace Photo_Shop
                     pictureBoxImage = copyListImages[i];
                     index = i;
                     //copyPicrureBoxImage = pictureBoxImage;
-                    comboBoxes[i].SelectedItem = "нет";
+                    listBoxes[i].SelectedItem = "нет";
                     break;
                 }
             }
@@ -205,7 +207,7 @@ namespace Photo_Shop
                     groupBoxes.RemoveAt(i);
                     listImages.RemoveAt(i);
                     copyListImages.RemoveAt(i);
-                    comboBoxes.RemoveAt(i);
+                    listBoxes.RemoveAt(i);
                     numericUpDownBoxes.RemoveAt(i);
                     pictureBoxes.RemoveAt(i);
                     buttonBoxes.RemoveAt(i);
@@ -226,7 +228,9 @@ namespace Photo_Shop
                 groupBoxes[i].Location = new Point(5, i == 0 ? loc : loc + 240);
                 groupBoxes[i].Name = "groupBox" + (i + 1).ToString();
                 groupBoxes[i].Text = "Изображение №" + (i + 1).ToString();
+                pictureBoxes[i].Name = "pictureBox" + (i + 1).ToString();
                 loc = groupBoxes[i].Location.Y;
+                
             }
             if(groupBoxes.Count() > 0)
                 wg = groupBoxes.Last().Location.Y;
@@ -253,7 +257,7 @@ namespace Photo_Shop
         }
         private void Button_Mask_Click(object sender, EventArgs e)
         {
-            MaskParametrs = new();
+            MaskParametrs = new(pictureBox1, pictureBoxImage);
             MaskParametrs.Show();
         }
         private void Change_CheckBox_Click(object sender, EventArgs e)
@@ -300,7 +304,7 @@ namespace Photo_Shop
             {
                 Image image;
                 copyPicrureBoxImage = new((Bitmap)pictureBox1.Image.Clone());
-                switch (comboBoxes[i].SelectedIndex)
+                switch (listBoxes[i].SelectedIndex)
                 {
                     case 1: //Сложение
                         {
@@ -339,6 +343,23 @@ namespace Photo_Shop
                             break;
                         };
                 }
+            }
+        }
+        private void Save_Img_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(pictureBox1.Image is not null)
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "Картинки (png, jpg, bmp, gif) |*.jpg;*.bmp;*.gif|All files (*.*)|*.*";
+                if (saveFileDialog.ShowDialog() == DialogResult.Cancel)
+                    return;
+                string filename = saveFileDialog.FileName;
+                pictureBox1.Image.Save(filename);
+                MessageBox.Show("Файл сохранен");
+            }
+            else
+            {
+                MessageBox.Show("Не удалось сохранить картинку", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
